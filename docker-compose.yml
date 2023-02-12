@@ -1,0 +1,62 @@
+version: "3.7"
+
+services:
+  database:
+    image: mysql:8.0
+    platform: linux/amd64
+    command:
+      - "--default-authentication-plugin=mysql_native_password"
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=codetest
+      - MYSQL_USER=codetest
+      - MYSQL_PASSWORD=swordfish
+    ports:
+      - "3306:3306"
+    restart: always
+    networks:
+      - de_challenge
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - de_challenge
+
+  load-schema:
+    image: load-schema
+    build: images/load-schema
+    volumes:
+      - ./data:/data
+    networks:
+      - de_challenge
+
+  load-csv:
+    image: load-csv
+    build: images/load-csv
+    volumes:
+      - ./data:/data
+    networks:
+      - de_challenge
+
+  export-json:
+    image:  export-json
+    build: images/export-json
+    volumes:
+      - ./data:/data
+    networks:
+      - de_challenge
+
+  example-python:
+    image: example-python
+    build: images/example-python
+    volumes:
+      - ./data:/data
+    networks:
+      - de_challenge
+
+networks:
+  de_challenge:
+    external: true
